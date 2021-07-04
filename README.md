@@ -8,7 +8,7 @@ Takehiko Ohkawa, Takuma Yagi, Atsushi Hashimoto, Yoshitaka Ushiku, and Yoichi Sa
 IEEE Access, 2021 \
 Project page: https://tkhkaeio.github.io/projects/21_FgSty-CPL/
 ## Requirements
-Python 3.7 
+Python 3.7 \
 PyTorch 1.6.0
 
 Data directory structure should be
@@ -34,8 +34,7 @@ Data directory structure should be
 
 4. Run `./scripts/EGTEA_v1_test_part00x.sh`
 
-<img src="https://user-images.githubusercontent.com/28190044/124393668-7cff2300-dd36-11eb-9bd8-d7a7fd06616b.jpg
-">
+<img src="https://user-images.githubusercontent.com/28190044/124393668-7cff2300-dd36-11eb-9bd8-d7a7fd06616b.jpg">
 
 ## Training & Adaptation
 1. Please download pretrained models of [RefineNet](https://github.com/DrSleep/refinenet-pytorch) from [[here]](https://drive.google.com/drive/folders/1jd60n_8sXalDrY7N5sz4Vg2qWSBtCwES?usp=sharing) and set them to `CPL/pretrained_models`.
@@ -49,9 +48,10 @@ for the naive training on a single dataset, or run
 python train_refinenet_CPL.py --dataset /path/to/your/style-adapted-dataset \
                               --src_dataset /path/to/your/source-dataset \
                               --trg_dataset /path/to/your/target-dataset \
-                              --src_model_path /path/to/your/pretrained-source-model 
+                              --src_model_path /path/to/your/pretrained-source-model \
+                              --eta 0
 ```
-for the adaptation training based on the consensus scheme. \
+for the adaptation training based on the consensus scheme without adversarial adaptation. \
 Note: the training of CPL requires to use two GPUs.
 
 <img src="https://user-images.githubusercontent.com/28190044/123940334-08de1b80-d9d4-11eb-9665-76e1226c83cd.jpg">
