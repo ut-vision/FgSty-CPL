@@ -10,6 +10,9 @@ n_split = 5 # # of scripts
 modes = ["test", "train"]
 n_style_images_per_target = 10 
 root = "/path/to/your/root"
+#NOTE: choose which data you use as the style set
+style_sets = ["GTEA"]
+# style_sets = ["GTEA", "EDSH12", "UTG", "YHG"]
 """
 content and style directories should be
 - root / source-dataset (e.g., EGTEA, ObMan-Ego)
@@ -23,11 +26,10 @@ content and style directories should be
 """
 content_dirname = "EGTEA"
 content_dir = os.path.join(root, content_dirname)
-style_sets = ["GTEA", "EDSH12", "UTG", "YHG"]
 style_path = {"GTEA": {"img": [], "mask": []}, "EDSH12": {"img": [], "mask": []}, "UTG": {"img": [], "mask": []}, "YHG": {"img": [], "mask": []}}
 sadb_suffix = "rand"
+#NOTE: for ObMan-Ego, use "pretrained_models/photo_wct_sim.pth"
 pretrained_model = "pretrained_models/photo_wct.pth"
-#for ObMan-Ego, use "pretrained_models/photo_wct_sim.pth"
 
 os.makedirs("scripts", exist_ok=True)
 os.makedirs("input_files/%s"%ver, exist_ok=True)
