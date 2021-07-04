@@ -26,7 +26,7 @@ from utils import AverageMeter, prob2seg, save_log, pred2score
 warnings.filterwarnings("ignore", message="numpy.dtype size changed")
 warnings.filterwarnings("ignore")
 
-# assert consecutive gpus are aviable (default: gpu0 and gpu1)
+# assert consecutive gpus are available (default: gpu0 and gpu1)
 # Training settings
 parser = argparse.ArgumentParser(description='refinenet')
 parser.add_argument('--dataset', help='facades', default="/path/to/your/style-adapted-dataset")
@@ -41,7 +41,6 @@ parser.add_argument('--weight_decay', type=float, default=0, help='weight decay'
 parser.add_argument('--beta1', type=float, default=0.5, help='beta1 for adam')
 parser.add_argument('--eta', type=float, default=0.8, help='eta for GRL')
 parser.add_argument('--cuda', action='store_true', help='use cuda?')
-parser.add_argument('--src_train', type=bool, help='train src model?')
 parser.add_argument('--use_all', action='store_true', help='use all dataset?')
 parser.add_argument('--gpu', type=int, default=0, help='gpu device id')
 parser.add_argument('--iou_thresh', type=float, default=0.8, help='threshold for PL')
@@ -52,12 +51,8 @@ parser.add_argument('--seed', type=int, default=123, help='random seed to use')
 opt = parser.parse_args()
 if opt.gpu >= 0:
     opt.cuda = True
-if opt.src_train == True:
-    assert opt.eta > 0
 opt.dataset = opt.dataset.rstrip("/")
 name = opt.dataset.split("/")[-1] + "_CPL_alpha_%s_beta_%s_" % (str(opt.iou_thresh), str(opt.eta))
-if opt.src_train:
-    name += "src_train_"
 name += str(opt.seed)
 
 print(name)
@@ -118,7 +113,7 @@ optimizer_src = optim.Adam(model_src.parameters(), lr=opt.lr/2, betas=(opt.beta1
 
 def train_one_epoch(model, model_src, netD, epoch, sty_source_loader, source_loader, target_loader):
     model.train()
-    if opt.src_train:
+    if opt.eta > 0:
         model_src.train()
     train_losses = AverageMeter()
     train_PL_losses = AverageMeter()
@@ -157,7 +152,7 @@ def train_one_epoch(model, model_src, netD, epoch, sty_source_loader, source_loa
         # forward
         pred_ss, feat_ss = model(img_ss.cuda(device=opt.gpu), with_feat=True)
         pred_t1, feat_t1 = model(img_t.cuda(device=opt.gpu), with_feat=True)
-        if opt.src_train:
+        if opt.eta > 0:
             pred_s, feat_s = model_src(img_s.cuda(device=opt.gpu+1), with_feat=True)
             pred_t2, feat_t2 = model_src(img_t.cuda(device=opt.gpu+1), with_feat=True)
         else:
@@ -202,7 +197,7 @@ def train_one_epoch(model, model_src, netD, epoch, sty_source_loader, source_loa
         if opt.eta > 0:
             optimizerD.step()
         
-        if opt.eta > 0 and opt.src_train:
+        if opt.eta > 0:
             optimizer_src.zero_grad() 
             optimizerD2.zero_grad()
             loss2 = criterionBCE2(pred_s, mask_s.cuda(device=opt.gpu + 1))
@@ -219,8 +214,9 @@ def train_one_epoch(model, model_src, netD, epoch, sty_source_loader, source_loa
             netD = netD.cuda(device=opt.gpu)
 
         train_losses.update(loss.data.item(), opt.batchSize)
-        train_adv_s_losses.update(disc_loss_s.data.item(), opt.batchSize)
-        train_adv_t_losses.update(disc_loss_t1.data.item(), opt.batchSize)
+        if opt.eta > 0:
+            train_adv_s_losses.update(disc_loss_ss.data.item(), opt.batchSize)
+            train_adv_t_losses.update(disc_loss_t1.data.item(), opt.batchSize)
 
         # score
         _iou, _f1 = pred2score(pred_ss, mask_ss)
