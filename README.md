@@ -3,7 +3,7 @@
 This repository contains the code of our foreground-aware stylization (FgSty) and consensus pseudo-labeling (CPL), and the synthesized dataset used in our experiments, ObMan-Ego (see [DATASET.md](./DATASET.md)). If you have some requests or questions, please contact the first author.
 
 ## Paper
-[Foreground-Aware Stylization and Consensus Pseudo-Labeling for Domain Adaptation of First-Person Hand Segmentation](https://ieeexplore.ieee.org/document/9469781) \
+[Foreground-Aware Stylization and Consensus Pseudo-Labeling for Domain Adaptation of First-Person Hand Segmentation](https://arxiv.org/abs/2107.02718) \
 Takehiko Ohkawa, Takuma Yagi, Atsushi Hashimoto, Yoshitaka Ushiku, and Yoichi Sato \
 IEEE Access, 2021 \
 Project page: https://tkhkaeio.github.io/projects/21_FgSty-CPL/
