@@ -28,6 +28,21 @@ Data directory structure should be
 ## Stylization
 1. Please download pretrained models of [PhotoWCT](https://github.com/NVIDIA/FastPhotoStyle) from [[here]](https://drive.google.com/drive/folders/1a43zm4mLnPUIsA5ZJC6sE6nY-M3383nm?usp=sharing) and set them to `FgSty/pretrained_models`.
 
+For stylizing in an instance,
+
+2. `cd FSty` and run
+```
+python test.py --model /path/to/your/model 
+               --content_image_path /path/to/your/content-image
+               --content_seg_path /path/to/your/content-mask
+               --style_image_path /path/to/your/style-image 
+               --style_seg_path /path/to/your/style-mask
+               --output_image_path /path/to/your/output
+```
+(If you stylize the foreground only, see [FgSty-Only.md](FgSty/FgSty-Only.md).)
+
+For stylizing in batches,
+
 2. `cd FgSty` and specify your data root directory in `make_script_rand.py`.
 
 3. Run `python make_script_rand.py` to create files with arguments for stylization.
