@@ -17,13 +17,14 @@ parser.add_argument('--output_image_path', default='./results/example1.png')
 parser.add_argument('--save_intermediate', action='store_true', default=False)
 parser.add_argument('--fast', action='store_true', default=False)
 parser.add_argument('--no_post', action='store_true', default=False)
+parser.add_argument('--fg_only', action='store_true', default=False)
 parser.add_argument('--cuda', type=int, default=1, help='Enable CUDA.')
 parser.add_argument('--gpu_id', type=int, default=0, help='id of gpu.')
 args = parser.parse_args()
 
 img_exts = ['.jpg', '.jpeg', '.png']
 # Load model
-p_wct = PhotoWCT(args.gpu_id)
+p_wct = PhotoWCT(gpu_id=args.gpu_id, fg_only=args.fg_only)
 p_wct.load_state_dict(torch.load(args.model))
 
 if args.fast:

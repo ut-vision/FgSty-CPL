@@ -6,7 +6,7 @@ from models import VGGEncoder, VGGDecoder
 
 
 class PhotoWCT(nn.Module):
-    def __init__(self, gpu_id=0):
+    def __init__(self, gpu_id=0, fg_only=False):
         super(PhotoWCT, self).__init__()
         self.e1 = VGGEncoder(1)
         self.d1 = VGGDecoder(1)
@@ -17,6 +17,7 @@ class PhotoWCT(nn.Module):
         self.e4 = VGGEncoder(4)
         self.d4 = VGGDecoder(4)
         self.gpu_id = gpu_id
+        self.fg_only = fg_only
     
     def transform(self, cont_img, styl_img, cont_seg, styl_seg):
         self.__compute_label_info(cont_seg, styl_seg)
@@ -133,6 +134,8 @@ class PhotoWCT(nn.Module):
                 t_styl_seg = np.asarray(Image.fromarray(styl_seg, mode='RGB').resize((styl_w, styl_h), Image.NEAREST))
 
             for l in self.label_set:
+                if self.fg_only and l == 0: #background
+                    continue
                 if self.label_indicator[l] == 0:
                     continue
                 cont_mask = np.where(t_cont_seg.reshape(t_cont_seg.shape[0] * t_cont_seg.shape[1]) == l)
@@ -147,7 +150,7 @@ class PhotoWCT(nn.Module):
                     styl_indi = styl_indi.cuda(self.gpu_id)
 
                 cFFG = torch.index_select(cont_feat_view, 1, cont_indi)
-                if (bg_styl_feat is not None) and (l == 0):  #background
+                if (bg_styl_feat is not None) and (l == 0): #background
                     sFFG = torch.index_select(bg_styl_feat_view, 1, styl_indi)
                 else:
                     sFFG = torch.index_select(styl_feat_view, 1, styl_indi)    
